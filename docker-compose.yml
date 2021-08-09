@@ -1,0 +1,32 @@
+version: '3'
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ./start_linux
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    env_file:
+      - app.env
+    ports:
+    - 80:80
+  db:
+    container_name: db
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - "./db/mysql:/var/lib/mysql"
+      - "./db/initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      - MYSQL_ROOT_PASSWORD=pwd
+      - MYSQL_DATABASE=groupware
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
